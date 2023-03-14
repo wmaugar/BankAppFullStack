@@ -1,21 +1,31 @@
-function Spa (){
-    return (
-    <HashRouter>
-        <Navbar/>
-        <UserContext.Provider value={
-                    {users: [{name:'abel', email: 'abel@mit.edu', password: 'secret', balance: 100}],
-                    activeUser: 'Any'}}>
-            <Route path="/" exact component={Home}/>         
-            <Route path="/createAccount/" component={CreateAccount}/>
-            <Route path="/login/" component={Login}/>
-            <Route path="/deposit/" component={Deposit}/>
-            <Route path="/withdraw/" component={Withdraw}/>
-            <Route path="/balance/" component={Balance}/>
-            <Route path="/alldata/" component={AllData}/>
-        </UserContext.Provider>
-    </HashRouter>
-    );
-}
+var express = require('express');
+var app     = express();
+var cors    = require('cors');
+var dal     = require('./dal.js');
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Spa/>);
+
+// used to serve static files from public directory
+app.use(express.static('public'));
+// use cors 
+app.use(cors());
+// route to create new users 
+app.get('/account/create/:name/:email/:password', function (req, res){
+    // else create user
+    dal.create(req.params.name,req.params.email,req.params.password).
+        then((user)=> {
+            console.log(user);
+            res.send(user);
+        });
+});
+// route for show all accounts
+app.get('/account/all', function (req, res){
+    dal.all().
+        then((docs) =>{
+            console.log(docs);
+            res.send(docs);
+    });
+});
+
+var port = 3000;
+app.listen(port);
+console.log('Running on port: ' + port);
