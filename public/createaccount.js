@@ -21,7 +21,13 @@ function CreateAccount() {
         if(!validate(name, 'name'))     return;
         if(!validate(email, 'email'))     return;
         if(!validate(password, 'password'))     return;
-        ctx.users.push({name, email, password, balance: 100});
+        //ctx.users.push({name, email, password, balance: 100});
+        const url = `/account/create/${name}/${email}/${password}`;
+        (async () => {
+            var res = await fetch(url);
+            var data = await res.json();
+            console.log(data);
+        })(); 
         setShow(false);
     }
     
